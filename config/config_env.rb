@@ -5,5 +5,11 @@ end
 
 config_env :production do
   set 'DB_KEY', "7Qbi3XJcok2WinTPRgr5t4l42L8wvrh0ElrLi5Z3qdI="
-  set 'MSG_KEY', "0pY2VsiUswep2smKNlk-kqXTqKKLwXc_1yYL5lM0TT8=" 
+  set 'MSG_KEY', "0pY2VsiUswep2smKNlk-kqXTqKKLwXc_1yYL5lM0TT8="
+end
+
+config_env do
+  set 'SENDGRID_DOMAIN', 'heroku.com'
+  set 'SENDGRID_USERNAME', 'app37044493@heroku.com'
+  set 'SENDGRID_PASSWORD', 'wgwd7z3i6475'
 end
