@@ -3,13 +3,14 @@
 %html
   %head
     %title Credit Card API
+    %link{rel:'stylesheet', href:'/custom.css'}
   %body
     %h1 Welcome to Credit Card API
     - if @current_user
       = "Hi, #{@current_user.username}"
       %span
         &nbsp;|
-      %form{:action => '/api/v1/users/sign_out', :method => 'post', :style => 'display: inline'}
+      %form{:action => '/logout', :method => 'post', :style => 'display: inline'}
         %input{:type => 'submit', :value => 'Sign Out'}
     - else
       %a{href: '/api/v1/users/sign_in'}
@@ -18,4 +19,5 @@
         &nbsp;|
       %a{href: '/api/v1/users/sign_up'}
         = "Sign Up"
+    = haml :flash_bar
     = yield
