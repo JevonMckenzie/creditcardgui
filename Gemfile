@@ -24,6 +24,7 @@ gem 'rbnacl-libsodium'
 # manage environment variables
 gem 'dotenv'
 gem 'config_env'
+gem 'pony'
 
 # view DSL support
 gem 'haml'
