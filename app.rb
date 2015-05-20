@@ -3,16 +3,33 @@ require 'sinatra'
 require_relative 'model/credit_card.rb'
 require_relative 'model/user.rb'
 require_relative 'helpers/credit_card_api_helper.rb'
+require 'rack-flash'
+require 'config_env'
+
 
 # credit card api service
 class CreditCardAPI < Sinatra::Base
   include CreditCardAPIHelper
 
-  use Rack::Session::Cookie
+  # use Rack::Session::Cookie
   enable :logging
 
+  configure :development, :test do
+    # require 'config_env'
+    ConfigEnv.path_to_config("#{__dir__}/config/config_env.rb")
+  end
+
+  configure do
+    use Rack::Session::Cookie, secret: ENV['MSG_KEY']
+    use Rack::Flash, :sweep => true
+  end
+
+  # before do
+  #   @current_user = session[:user_id] ? User.find_by_id(session[:user_id]): nil
+  # end
+
   before do
-    @current_user = session[:user_id] ? User.find_by_id(session[:user_id]): nil
+    @current_user = find_user_by_token(session[:auth_token])
   end
 
   get '/' do
@@ -23,6 +40,22 @@ class CreditCardAPI < Sinatra::Base
     haml :sign_up
   end
 
+  post '/logout' do
+    session[:auth_token] = nil
+    flash[:notice] = "You have logged out"
+    redirect '/'
+  end
+
+  post '/register' do
+    registration =
+      Registration.new(params[:username], params[:email], params[:password])
+    unless (registration.complete?)
+      flash[:error] = "Please fill in all the fields"
+      redirect '/register'
+      halt
+    end
+  end
+
   post '/api/v1/users/sign_up/?' do
     logger.info('Sign Up')
     password = params[:password]
@@ -31,7 +64,7 @@ class CreditCardAPI < Sinatra::Base
       if password == password_confirm
         new_user = User.new(params.except(:password_confirm.to_s))
         new_user.password = password
-        new_user.save! ? login(new_user) : fail('New user creation failed')
+        new_user.save! ? login_user(new_user) : fail('New user creation failed')
       else
         fail 'Passwords do not match'
       end
@@ -49,7 +82,7 @@ class CreditCardAPI < Sinatra::Base
     username = params[:username]
     password = params[:password]
     user = User.authenticate!(username, password)
-    user ? login(user) : redirect('/api/v1/users/sign_in/')
+    user ? login_user(user) : redirect('/api/v1/users/sign_in/')
   end
 
   post '/api/v1/users/sign_out/?' do
