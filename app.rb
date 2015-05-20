@@ -37,7 +37,17 @@ class CreditCardAPI < Sinatra::Base
   end
 
   get '/api/v1/users/sign_up/?' do
-    haml :sign_up
+    if token = params[:token]
+      begin
+        create_user_with_encrypted_token(token)
+        flash[:notice] = "Welcome! Your account has been successfully created."
+      rescue
+        flash[:error] = "Your account could not be created. Your link is either expired or invalid."
+      end
+      redirect '/'
+    else
+      haml(:sign_up)
+    end
   end
 
   post '/logout' do
@@ -57,20 +67,21 @@ class CreditCardAPI < Sinatra::Base
   end
 
   post '/api/v1/users/sign_up/?' do
-    logger.info('Sign Up')
-    password = params[:password]
-    password_confirm = params[:password_confirm]
-    begin
-      if password == password_confirm
-        new_user = User.new(params.except(:password_confirm.to_s))
-        new_user.password = password
-        new_user.save! ? login_user(new_user) : fail('New user creation failed')
-      else
-        fail 'Passwords do not match'
+    registration = Registration.new(params)
+
+    if (registration.complete?) && (params[:password] == params[:password_confirm])
+      begin
+        email_registration_verification(registration)
+        flash[:notice] = "A verification link has been sent to you. Please check your email!"
+        redirect '/'
+      rescue => e
+        logger.error "FAIL EMAIL: #{e}"
+        flash[:error] = "Could not send registration verification: check email address"
+        redirect '/sign_up'
       end
-    rescue => exception
-      logger.error(exception)
-      redirect '/api/v1/users/sign_up/'
+    else
+      flash[:error] = "Please fill in all the fields and make sure passwords match"
+      redirect '/sign_up'
     end
   end
 
