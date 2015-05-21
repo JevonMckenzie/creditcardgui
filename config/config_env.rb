@@ -10,6 +10,6 @@ end
 
 config_env do
   set 'SENDGRID_DOMAIN', 'heroku.com'
-  set 'SENDGRID_USERNAME', 'app37044493@heroku.com'
-  set 'SENDGRID_PASSWORD', 'wgwd7z3i6475'
+  set 'SENDGRID_USERNAME', 'app37068920@heroku.com'
+  set 'SENDGRID_PASSWORD', 'bvlf6ude7064'
 end
