@@ -74,10 +74,10 @@ class CreditCardAPI < Sinatra::Base
         email_registration_verification(registration)
         flash[:notice] = "A verification link has been sent to you. Please check your email!"
         redirect '/'
-      rescue => e
-        logger.error "FAIL EMAIL: #{e}"
-        flash[:error] = "Could not send registration verification: check email address"
-        redirect '/sign_up'
+      # rescue => e
+      #   logger.error "FAIL EMAIL: #{e}"
+      #   flash[:error] = "Could not send registration verification: check email address"
+      #   redirect '/sign_up'
       end
     else
       flash[:error] = "Please fill in all the fields and make sure passwords match"
