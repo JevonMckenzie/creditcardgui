@@ -37,6 +37,7 @@ class CreditCardAPI < Sinatra::Base
   end
 
   get '/sign_up' do
+    haml :sign_up
     if token = params[:token]
       begin
         create_user_with_encrypted_token(token)
