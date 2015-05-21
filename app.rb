@@ -36,7 +36,7 @@ class CreditCardAPI < Sinatra::Base
     haml :index
   end
 
-  get '/api/v1/users/sign_up/?' do
+  get '/sign_up' do
     if token = params[:token]
       begin
         create_user_with_encrypted_token(token)
@@ -46,7 +46,7 @@ class CreditCardAPI < Sinatra::Base
       end
       redirect '/'
     else
-      haml(:sign_up)
+      haml :sign_up
     end
   end
 
@@ -66,7 +66,7 @@ class CreditCardAPI < Sinatra::Base
     end
   end
 
-  post '/api/v1/users/sign_up/?' do
+  post '/sign_up' do
     registration = Registration.new(params)
 
     if (registration.complete?) && (params[:password] == params[:password_confirm])
