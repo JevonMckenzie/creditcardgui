@@ -51,7 +51,7 @@ module CreditCardAPIHelper
   end
 
   def registration_email(token)
-    verification_url = "#{request.base_url}/register?token=#{token}"
+    verification_url = "#{request.base_url}/sign_up?token=#{token}"
     "<H1>SecureCalculator Registration Received<H1>" \
     "<p>Please <a href=\"#{verification_url}\">click here</a> to validate " \
     "your email and activate your account</p>"
